@@ -24,6 +24,12 @@ Parameters:
   Ec2KeyName:
     Type: String
     Default: laravel-ci-ec2-user
+  DBMasterUserName:
+    Type: String
+    Default: administrator
+  DBMasterUserPassword:
+    Type: String
+    Default: cocoro13
 
 Resources:
   VPC:
@@ -163,3 +169,14 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-sg-for-private-server
+  AppDatabase: # RDSの設定
+		Type: AWS::RDS::DBInstance
+		Properties:
+      Engine: MySQL
+      EngineVersion: 8.0
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+			MasterUsername: !Ref DBMasterUserName
+      MasterUserPassword: !Ref DBMasterUserPassword
+			VPCSecurityGroups:
+        - !Ref SecurityGroupForPrivateServe
